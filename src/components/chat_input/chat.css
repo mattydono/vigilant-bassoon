@@ -1,0 +1,86 @@
+.chat-container {
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatOutput-container {
+    background-color: lightgrey;
+    height: 70%;
+    max-height: 70%;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.messageDiv {
+    flex: 0 0 auto;
+    min-height: 30px;
+    width: 40%;
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: darkorange;
+    align-items: baseline;
+    align-self: flex-start;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: pre-wrap;
+    margin-top: 1%;
+    border-radius: 5px;
+}
+
+.messageDivActive {
+    flex: 0 0 auto;
+    min-height: 30px;
+    width: 40%;
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: aquamarine;
+    align-items: baseline;
+    align-self: flex-end;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: pre-wrap;
+    margin-top: 1%;
+    border-radius: 5px;
+}
+
+.chatInput-container {
+    background-color: yellow;
+    height: 30%;
+    width: 100%;
+    display: flex;
+}
+
+.input {
+    resize: none;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.button {
+    height: 100%;
+    width: 20%;
+    box-sizing: border-box;
+    white-space: initial;
+}
+
+.scroll {
+    height: 600px;
+    width: 400px;
+}
+
+.xsFont {
+    font-size: x-small;
+    margin-left: 5%;
+    margin-right: 5%;
+}

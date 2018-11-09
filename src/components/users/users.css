@@ -1,0 +1,61 @@
+.users-container {
+    background-color: black;
+    height: 100%;
+    max-height: 100%;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+}
+
+.userDisplay {
+    height: 90%;
+    max-height: 100%;
+    width: 100%;
+    background-color: yellow;
+    overflow: auto;
+}
+
+.inactive {
+    height: 50px;
+    width: 100%;
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.inactive:hover {
+    background-color: darkorange;
+    cursor: pointer;
+}
+
+.active {
+    height: 50px;
+    width: 100%;
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+    background-color: aquamarine;
+    align-items: center;
+    border-right: dashed 1px black;
+    box-sizing: border-box;
+}
+
+.inputContainer {
+    height: 10%;
+    width: 100%;
+}
+
+.userInput {
+    height: 100%;
+    width: 75%;
+    box-sizing: border-box;
+}
+
+.userPush {
+    height: 100%;
+    width: 25%;
+    background-color: white;
+    box-sizing: border-box;
+}

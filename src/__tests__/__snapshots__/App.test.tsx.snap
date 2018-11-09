@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The App root renders as expected 1`] = `
+<div
+  className="App"
+>
+  <Input
+    onChange={[Function]}
+  />
+  <Component
+    content=""
+  />
+</div>
+`;
