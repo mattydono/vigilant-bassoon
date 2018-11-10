@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import { App } from '../components/App';
+import { App } from '../App';
 
 describe('The App root', () => {
   it('renders as expected', () => {
