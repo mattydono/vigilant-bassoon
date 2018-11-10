@@ -1,1 +1,3 @@
-# react-ts-blotter
+# Vigilant Bassoon
+
+A new chat application.
