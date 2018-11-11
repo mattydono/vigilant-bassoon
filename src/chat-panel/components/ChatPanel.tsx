@@ -1,6 +1,6 @@
 import React, { Component, createRef } from 'react';
-import { Message } from '../../models';
-import './chat.css';
+import { Message } from '../Message';
+import './chatPanel.css';
 
 type State = {
   userText: string;
@@ -12,7 +12,7 @@ type Props = {
   addMessage: (message: string) => void;
 };
 
-export class ChatInput extends Component<Props, State> {
+export class ChatPanel extends Component<Props, State> {
   public state: State = {
     userText: '',
   };

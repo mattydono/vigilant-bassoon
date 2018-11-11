@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import uuid from 'uuid/v4';
-import { Message, User } from '../models';
 import './App.css';
-import { ChatInput } from './chat_input/ChatInput';
-import { Users } from './users/Users';
+import { ChatPanel, Message } from './chat-panel';
+import { User, Users } from './user-selection';
 
 const getCurrentTime = () => new Date().toLocaleTimeString();
 
@@ -32,7 +31,7 @@ export class App extends Component<{}, State> {
           addUser={this.addUser}
         />
         {activeUser !== undefined && (
-          <ChatInput
+          <ChatPanel
             messages={this.state.messages}
             activeUserName={activeUser.name}
             addMessage={this.addMessage}

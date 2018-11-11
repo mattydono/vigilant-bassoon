@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '../../models';
+import { User } from '../User';
 import './users.css';
 
 type Props = {
@@ -54,15 +54,15 @@ export class Users extends React.Component<Props, State> {
       const className = activeUserId === user.id ? 'active' : 'inactive';
       const onClick = this.userSelect(activeUserId === user.id ? null : user.id);
       return (
-        <div key={user.id} className={className} onClick={onClick}>
+        <div key={user.id} className={`userOption ${className}`} onClick={onClick}>
           {user.name}
         </div>
       );
     });
   };
 
-  private onKeyPress: React.KeyboardEventHandler<HTMLInputElement> = e => {
-    if (e.key === 'Enter') {
+  private onKeyPress: React.KeyboardEventHandler<HTMLInputElement> = event => {
+    if (event.key === 'Enter') {
       this.onClickAdd();
     }
   };

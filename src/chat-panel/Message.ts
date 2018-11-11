@@ -1,5 +1,7 @@
+export type MessageId = string;
+
 export type Message = {
-  id: string;
+  id: MessageId;
   message: string;
   time: string;
 };
