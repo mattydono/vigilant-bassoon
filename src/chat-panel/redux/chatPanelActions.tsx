@@ -1,4 +1,4 @@
-import { createAction } from '../../redux';
+import { createAction } from 'redux-actions';
 import { Message } from '../Message';
 
 export const ADD_MESSAGE = 'messages/ADD_MESSAGE';

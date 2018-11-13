@@ -1,4 +1,4 @@
-import { User } from '../User';
+import { User, UserId } from '../User';
 import {
   ADD_USER,
   AddUserAction,
@@ -8,26 +8,35 @@ import {
   SetActiveUserAction,
 } from './usersActions';
 
-type UsersState = User[];
+export type UsersState = {
+  users: User[];
+  activeUserId: UserId | null;
+};
+
+const initialState: UsersState = {
+  users: [],
+  activeUserId: null,
+};
 
 export function usersReducer(
-  state: UsersState = [],
+  state: UsersState = initialState,
   action: AddUserAction | SetActiveUserAction | RemoveUserAction,
 ): UsersState {
   switch (action.type) {
     case ADD_USER:
       const addUserAction = action as AddUserAction;
-      return [...state, addUserAction.payload];
+      return { ...state, users: [...state.users, addUserAction.payload!] };
 
     case SET_ACTIVE_USER:
-      return state;
+      const setActiveUserAction = action as SetActiveUserAction;
+      return { ...state, activeUserId: setActiveUserAction.payload! };
 
     case REMOVE_USER:
       const removeUserAction = action as RemoveUserAction;
-      const idx = state.findIndex(user => user.id === removeUserAction.payload);
-      const newState = [...state];
-      newState.splice(idx, 1);
-      return newState;
+      const idx = state.users.findIndex(user => user.id === removeUserAction.payload);
+      const newUsers = [...state.users];
+      newUsers.splice(idx, 1);
+      return { ...state, users: newUsers };
 
     default:
       return state;
