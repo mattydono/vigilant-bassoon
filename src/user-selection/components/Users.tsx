@@ -1,19 +1,29 @@
 import React from 'react';
-import { User } from '../User';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import uuid from 'uuid';
+import { AppState } from '../../redux';
+import { addUser, setActiveUser } from '../redux';
+import { User, UserId } from '../User';
 import './users.css';
-
-type Props = {
-  users: User[];
-  activeUserId: string | null;
-  setActiveUser: (id: string | null) => void;
-  addUser: (name: string) => void;
-};
 
 type State = {
   name: string;
 };
 
-export class Users extends React.Component<Props, State> {
+type StateProps = {
+  users: User[];
+  activeUserId: string | null;
+};
+
+type DispatchProps = {
+  setActiveUser: (id: string | null) => void;
+  addUser: (name: string) => void;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class _Users extends React.Component<Props, State> {
   public state: State = {
     name: '',
   };
@@ -99,3 +109,23 @@ export class Users extends React.Component<Props, State> {
     }
   };
 }
+
+function mapStateToProps(state: AppState): StateProps {
+  const activeUser = state.users.users.find(user => user.id === state.users.activeUserId);
+  return {
+    users: state.users.users,
+    activeUserId: activeUser ? activeUser.id : null,
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+  return {
+    setActiveUser: (userId: UserId | null) => dispatch(setActiveUser(userId)),
+    addUser: (name: string) => dispatch(addUser({ name, id: uuid() })),
+  };
+}
+
+export const Users = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(_Users);

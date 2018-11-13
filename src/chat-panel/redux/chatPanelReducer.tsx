@@ -2,7 +2,7 @@ import { Message } from '../Message';
 import * as MessagesActionTypes from './chatPanelActions';
 import { AddMessageAction } from './chatPanelActions';
 
-type MessagesState = Message[];
+export type MessagesState = Message[];
 
 export function messagesReducer(
   state: MessagesState = [],
@@ -10,7 +10,7 @@ export function messagesReducer(
 ): MessagesState {
   switch (action.type) {
     case MessagesActionTypes.ADD_MESSAGE:
-      return [...state, action.payload];
+      return [...state, action.payload!];
     default:
       return state;
   }

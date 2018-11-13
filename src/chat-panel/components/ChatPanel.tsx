@@ -1,18 +1,30 @@
 import React, { Component, createRef } from 'react';
+import { connect } from 'react-redux';
+import uuid from 'uuid';
+import { AppState } from '../../redux/configureStore';
+import { User } from '../../user-selection';
 import { Message } from '../Message';
+import { addMessage } from '../redux';
 import './chatPanel.css';
 
 type State = {
   userText: string;
 };
 
-type Props = {
-  activeUserName: string;
-  messages: Message[];
-  addMessage: (message: string) => void;
+type ChatPanelMessage = Message & { user: User };
+
+type StateProps = {
+  messages: ChatPanelMessage[];
+  activeUser: User | null;
 };
 
-export class ChatPanel extends Component<Props, State> {
+type DispatchProps = {
+  addMessage: (message: Message) => void;
+};
+
+type Props = StateProps & DispatchProps;
+
+class _ChatPanel extends Component<Props, State> {
   public state: State = {
     userText: '',
   };
@@ -26,6 +38,10 @@ export class ChatPanel extends Component<Props, State> {
   }
 
   public render() {
+    if (!this.props.activeUser) {
+      return null;
+    }
+
     return (
       <div className="chat-container">
         <div className="chatOutput-container" ref={this.scrollContainer}>
@@ -63,8 +79,10 @@ export class ChatPanel extends Component<Props, State> {
 
   private renderMessage = () =>
     this.props.messages.map(message => (
-      <div className={this.props.activeUserName === message.id ? 'messageDivActive' : 'messageDiv'}>
-        <div className="xsFont">{message.id}:</div>
+      <div
+        className={this.props.activeUser!.id === message.userId ? 'messageDivActive' : 'messageDiv'}
+      >
+        <div className="xsFont">{message.user.name}:</div>
         <div>{message.message}</div>
         <div className="xsFont">{message.time}</div>
       </div>
@@ -80,8 +98,42 @@ export class ChatPanel extends Component<Props, State> {
     if (message === '') {
       return;
     }
-
-    this.props.addMessage(message);
+    this.props.addMessage({
+      userId: this.props.activeUser!.id,
+      message,
+      id: uuid(),
+      time: new Date().toLocaleTimeString(),
+    });
     this.setState(() => ({ userText: '' }));
   };
 }
+
+function mapStateToProps(state: AppState): StateProps {
+  const messages = state.messages.map<ChatPanelMessage>(message => {
+    const user = state.users.users.find(user => user.id === message.userId);
+    if (user === undefined) {
+      return { ...message, user: { id: message.userId, name: 'DELETED' } };
+    }
+    return { ...message, user };
+  });
+
+  const activeUser = state.users.users.find(user => user.id === state.users.activeUserId);
+  return {
+    messages,
+    activeUser: activeUser ? activeUser : null,
+  };
+}
+
+// function mapDispatchToProps(dispatch: Dispatch){
+//   return {
+//     addMessage: (message: Message) => dispatch(addMessage(message))
+//   }
+// }
+const mapDispatchToProps = {
+  addMessage,
+};
+
+export const ChatPanel = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(_ChatPanel);
