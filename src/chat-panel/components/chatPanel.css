@@ -51,6 +51,18 @@
   white-space: pre-wrap;
   margin-top: 1%;
   border-radius: 5px;
+  position: relative;
+}
+
+.messageDivActive:hover .messageEdit {
+  opacity: 1;
+}
+
+.messageEdit {
+  opacity: 0;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: opacity 200ms ease-in-out;
 }
 
 .chatInput-container {

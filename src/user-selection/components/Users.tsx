@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import uuid from 'uuid';
 import { AppState } from '../../redux';
-import { addUser, setActiveUser } from '../redux';
+import { addUser, removeUser, setActiveUser } from '../redux';
 import { User, UserId } from '../User';
 import './users.css';
 
@@ -19,6 +19,7 @@ type StateProps = {
 type DispatchProps = {
   setActiveUser: (id: string | null) => void;
   addUser: (name: string) => void;
+  removeUser: (id: UserId) => void;
 };
 
 type Props = StateProps & DispatchProps;
@@ -65,10 +66,17 @@ export class _Users extends React.Component<Props, State> {
       const onClick = this.userSelect(activeUserId === user.id ? null : user.id);
       return (
         <div key={user.id} className={`userOption ${className}`} onClick={onClick}>
+          <div className="removeUser" onClick={this.onRemoveUser}>
+            ❌
+          </div>
           {user.name}
         </div>
       );
     });
+  };
+
+  private onRemoveUser = () => {
+    this.props.removeUser(this.props.activeUserId!);
   };
 
   private onKeyPress: React.KeyboardEventHandler<HTMLInputElement> = event => {
@@ -122,6 +130,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     setActiveUser: (userId: UserId | null) => dispatch(setActiveUser(userId)),
     addUser: (name: string) => dispatch(addUser({ name, id: uuid() })),
+    removeUser: (userId: UserId) => dispatch(removeUser(userId)),
   };
 }
 
