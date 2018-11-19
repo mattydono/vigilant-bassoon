@@ -50,6 +50,7 @@ export class _Users extends React.Component<Props, State> {
             value={this.state.name}
             onChange={this.onNameChange}
             onKeyPress={this.onKeyPress}
+            maxLength={10}
           />
           <button className="userPush" onClick={this.onClickAdd}>
             Enter
