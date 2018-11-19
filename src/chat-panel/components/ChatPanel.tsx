@@ -83,8 +83,12 @@ class _ChatPanel extends Component<Props, State> {
       <div
         className={this.props.activeUser!.id === message.userId ? 'messageDivActive' : 'messageDiv'}
       >
-        <div className="messageEdit" onClick={this.onMessageDeletion(message.id)}>
-          ❌✎
+        <div className="messageEdit">
+          <button className="editButton" onClick={this.onMessageDeletion(message.id)}>
+            {' '}
+            ❌{' '}
+          </button>
+          <button className="editButton"> ✎ </button>
         </div>
         <div className="xsFont">{message.user.name}:</div>
         <div>{message.message}</div>

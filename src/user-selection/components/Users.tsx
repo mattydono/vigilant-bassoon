@@ -66,9 +66,9 @@ export class _Users extends React.Component<Props, State> {
       const onClick = this.userSelect(activeUserId === user.id ? null : user.id);
       return (
         <div key={user.id} className={`userOption ${className}`} onClick={onClick}>
-          <div className="removeUser" onClick={this.onRemoveUser}>
+          <button className="removeUser" onClick={this.onRemoveUser}>
             ❌
-          </div>
+          </button>
           {user.name}
         </div>
       );
