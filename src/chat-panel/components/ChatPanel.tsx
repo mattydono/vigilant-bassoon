@@ -113,7 +113,14 @@ class _ChatPanel extends Component<Props, State> {
   };
 
   private onMessageDeletion = (messageId: MessageId) => () => {
-    this.props.removeMessage(messageId);
+    if (this.state.editMessageId) {
+      this.props.removeMessage(messageId);
+      this.setState({
+        userText: '',
+      });
+    } else {
+      this.props.removeMessage(messageId);
+    }
   };
 
   private onTextUpdate: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
