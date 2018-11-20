@@ -12,6 +12,6 @@ const rootReducer: ReducersMapObject<AppState> = {
   messages: messagesReducer,
 };
 
-export function configureStore() {
-  return createStore(combineReducers(rootReducer));
+export function configureStore(preloadedState?: Partial<AppState>) {
+  return createStore(combineReducers(rootReducer), preloadedState);
 }

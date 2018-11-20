@@ -1,17 +1,23 @@
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
-import { AppState } from '../../redux/configureStore';
+import { AppState } from '../../redux';
+import { PersistenceService } from '../../services/persistence';
 import { User } from '../../user-selection';
 import { Message, MessageId } from '../Message';
-import { addMessage, removeMessage } from '../redux';
+import { addMessage, editMessage, removeMessage } from '../redux';
 import './chatPanel.css';
 
 type State = {
   userText: string;
+  editMessageId: string | null;
 };
 
 type ChatPanelMessage = Message & { user: User };
+
+type OwnProps = {
+  persistenceService: PersistenceService<Message>;
+};
 
 type StateProps = {
   messages: ChatPanelMessage[];
@@ -21,13 +27,15 @@ type StateProps = {
 type DispatchProps = {
   addMessage: typeof addMessage; // both the same
   removeMessage: (messageId: MessageId) => void;
+  editMessage: (message: Message) => void;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 class _ChatPanel extends Component<Props, State> {
   public state: State = {
     userText: '',
+    editMessageId: null,
   };
 
   private scrollContainer = createRef<HTMLDivElement>();
@@ -85,10 +93,11 @@ class _ChatPanel extends Component<Props, State> {
       >
         <div className="messageEdit">
           <button className="editButton" onClick={this.onMessageDeletion(message.id)}>
-            {' '}
-            ❌{' '}
+            ❌
           </button>
-          <button className="editButton"> ✎ </button>
+          <button className="editButton" onClick={this.onMessageEdit(message)}>
+            ✎
+          </button>
         </div>
         <div className="xsFont">{message.user.name}:</div>
         <div>{message.message}</div>
@@ -96,8 +105,23 @@ class _ChatPanel extends Component<Props, State> {
       </div>
     ));
 
+  private onMessageEdit = (message: Message) => () => {
+    this.setState({
+      userText: message.message,
+      editMessageId: message.id,
+    });
+  };
+
   private onMessageDeletion = (messageId: MessageId) => () => {
-    this.props.removeMessage(messageId);
+    if (this.state.editMessageId) {
+      this.props.removeMessage(messageId);
+      this.setState({
+        userText: '',
+      });
+    } else {
+      this.props.removeMessage(messageId);
+    }
+    this.props.persistenceService.remove(messageId);
   };
 
   private onTextUpdate: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
@@ -110,12 +134,34 @@ class _ChatPanel extends Component<Props, State> {
     if (message === '') {
       return;
     }
-    this.props.addMessage({
+
+    if (this.state.editMessageId) {
+      const editingMessage = this.props.messages.find(
+        message => message.id === this.state.editMessageId,
+      );
+      if (editingMessage !== undefined) {
+        const newMessage = {
+          ...editingMessage,
+          message,
+        };
+        this.props.editMessage(newMessage);
+        this.props.persistenceService.save(newMessage);
+        this.setState({
+          userText: '',
+          editMessageId: null,
+        });
+      }
+      return;
+    }
+
+    const newMessage = {
       userId: this.props.activeUser!.id,
       message,
       id: uuid(),
       time: new Date().toLocaleTimeString(),
-    });
+    };
+    this.props.addMessage(newMessage);
+    this.props.persistenceService.save(newMessage);
     this.setState(() => ({ userText: '' }));
   };
 }
@@ -146,6 +192,7 @@ function mapStateToProps(state: AppState): StateProps {
 const dispatchMap: DispatchProps = {
   addMessage,
   removeMessage,
+  editMessage,
 };
 
 export const ChatPanel = connect(
