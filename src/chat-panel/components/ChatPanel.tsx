@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
-import { AppState } from '../../redux/configureStore';
+import { AppState } from '../../redux';
 import { PersistenceService } from '../../services/persistence';
 import { User } from '../../user-selection';
 import { Message, MessageId } from '../Message';
@@ -121,6 +121,7 @@ class _ChatPanel extends Component<Props, State> {
     } else {
       this.props.removeMessage(messageId);
     }
+    this.props.persistenceService.remove(messageId);
   };
 
   private onTextUpdate: React.ChangeEventHandler<HTMLTextAreaElement> = event => {

@@ -63,8 +63,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 50%;
-  transform: translate(-50%, -50%);
+  height: 100%;
+  transform: translate(-50%, -25%);
   transition: opacity 200ms ease-in-out;
   display: flex;
 }

@@ -72,7 +72,7 @@ export class _Users extends React.Component<Props, State> {
       const onClick = this.userSelect(activeUserId === user.id ? null : user.id);
       return (
         <div key={user.id} className={`userOption ${className}`} onClick={onClick}>
-          <button className="removeUser" onClick={this.onRemoveUser}>
+          <button className="removeUser" onClick={this.onRemoveUser(user.id)}>
             ❌
           </button>
           {user.name}
@@ -81,8 +81,9 @@ export class _Users extends React.Component<Props, State> {
     });
   };
 
-  private onRemoveUser = () => {
+  private onRemoveUser = (userId: UserId) => () => {
     this.props.removeUser(this.props.activeUserId!);
+    this.props.persistenceService.remove(userId);
   };
 
   private onKeyPress: React.KeyboardEventHandler<HTMLInputElement> = event => {

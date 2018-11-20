@@ -1,10 +1,13 @@
 type Persistable = { id: string | number };
 
 export interface PersistenceService<T extends Persistable> {
-  save(payload: T): void;
-  getAll(): T[];
-  read(id: string): T | null;
-  remove(id: string): void;
+  save(payload: T): Promise<boolean>;
+
+  getAll(): Promise<T[]>;
+
+  read(id: string): Promise<T | null>;
+
+  remove(id: string): Promise<boolean>;
 }
 
 export function createPersistenceService<T extends Persistable>(
@@ -18,23 +21,40 @@ export function createPersistenceService<T extends Persistable>(
   };
 }
 
-function save<T extends Persistable>(key: string, value: T): void {
-  const storedValue = localStorage.getItem(key);
-  const prevValue = storedValue ? JSON.parse(storedValue) : [];
-  const newValue = [...prevValue, value];
-  localStorage.setItem(key, JSON.stringify(newValue));
+async function save<T extends Persistable>(key: string, value: T): Promise<boolean> {
+  try {
+    // await new Promise(resolve => window.setTimeout(resolve, 5000));
+    const storedValue = localStorage.getItem(key);
+    const prevValue = storedValue ? JSON.parse(storedValue) : [];
+    const newValue = [...prevValue, value];
+    localStorage.setItem(key, JSON.stringify(newValue));
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
 
-function getAll<T extends Persistable>(key: string): T[] {
+async function getAll<T extends Persistable>(key: string): Promise<T[]> {
   const value = localStorage.getItem(key);
   return value ? JSON.parse(value) : [];
 }
 
-function read<T extends Persistable>(key: string, id: string | number): T | null {
-  const all = getAll<T>(key);
+async function read<T extends Persistable>(key: string, id: string | number): Promise<T | null> {
+  const all = await getAll<T>(key);
   return all.find(item => item.id === id) || null;
 }
 
-function remove(key: string, id: string | number): void {
-  localStorage.removeItem(key);
+async function remove<T extends Persistable>(key: string, id: string | number): Promise<boolean> {
+  try {
+    const all = await getAll<T>(key);
+    const tIdx = all.findIndex(item => item.id === id);
+    const newAll = [...all];
+    newAll.splice(tIdx, 1);
+    localStorage.setItem(key, JSON.stringify(newAll));
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
