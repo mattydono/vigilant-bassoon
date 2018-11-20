@@ -8,3 +8,7 @@ export type AddMessageAction = ReturnType<typeof addMessage>;
 export const REMOVE_MESSAGE = 'messages/REMOVE_MESSAGE';
 export const removeMessage = createAction<MessageId>(REMOVE_MESSAGE);
 export type RemoveMessageAction = ReturnType<typeof removeMessage>;
+
+export const EDIT_MESSAGE = 'messages/EDIT_MESSAGE';
+export const editMessage = createAction<Message>(EDIT_MESSAGE);
+export type EditMessageAction = ReturnType<typeof editMessage>;
