@@ -3,12 +3,17 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import uuid from 'uuid';
 import { AppState } from '../../redux';
+import { PersistenceService } from '../../services/persistence';
 import { addUser, removeUser, setActiveUser } from '../redux';
 import { User, UserId } from '../User';
 import './users.css';
 
 type State = {
   name: string;
+};
+
+type OwnProps = {
+  persistenceService: PersistenceService<User>;
 };
 
 type StateProps = {
@@ -22,7 +27,7 @@ type DispatchProps = {
   removeUser: (id: UserId) => void;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class _Users extends React.Component<Props, State> {
   public state: State = {
@@ -127,10 +132,15 @@ function mapStateToProps(state: AppState): StateProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: OwnProps): DispatchProps {
   return {
     setActiveUser: (userId: UserId | null) => dispatch(setActiveUser(userId)),
-    addUser: (name: string) => dispatch(addUser({ name, id: uuid() })),
+    addUser: (name: string) => {
+      const user = { id: uuid(), name };
+      // TODO: Replace with redux middleware
+      ownProps.persistenceService.save(user);
+      return dispatch(addUser(user));
+    },
     removeUser: (userId: UserId) => dispatch(removeUser(userId)),
   };
 }
