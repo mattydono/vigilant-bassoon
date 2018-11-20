@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import uuid from 'uuid';
 import { AppState } from '../../redux/configureStore';
 import { User } from '../../user-selection';
-import { Message } from '../Message';
-import { addMessage } from '../redux';
+import { Message, MessageId } from '../Message';
+import { addMessage, removeMessage } from '../redux';
 import './chatPanel.css';
 
 type State = {
@@ -19,7 +19,8 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  addMessage: (message: Message) => void;
+  addMessage: typeof addMessage; // both the same
+  removeMessage: (messageId: MessageId) => void;
 };
 
 type Props = StateProps & DispatchProps;
@@ -82,11 +83,22 @@ class _ChatPanel extends Component<Props, State> {
       <div
         className={this.props.activeUser!.id === message.userId ? 'messageDivActive' : 'messageDiv'}
       >
+        <div className="messageEdit">
+          <button className="editButton" onClick={this.onMessageDeletion(message.id)}>
+            {' '}
+            ❌{' '}
+          </button>
+          <button className="editButton"> ✎ </button>
+        </div>
         <div className="xsFont">{message.user.name}:</div>
         <div>{message.message}</div>
         <div className="xsFont">{message.time}</div>
       </div>
     ));
+
+  private onMessageDeletion = (messageId: MessageId) => () => {
+    this.props.removeMessage(messageId);
+  };
 
   private onTextUpdate: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
     const { value: userText } = event.currentTarget;
@@ -109,7 +121,7 @@ class _ChatPanel extends Component<Props, State> {
 }
 
 function mapStateToProps(state: AppState): StateProps {
-  const messages = state.messages.map<ChatPanelMessage>(message => {
+  const messages = state.messages.messages.map<ChatPanelMessage>(message => {
     const user = state.users.users.find(user => user.id === message.userId);
     if (user === undefined) {
       return { ...message, user: { id: message.userId, name: 'DELETED' } };
@@ -124,16 +136,19 @@ function mapStateToProps(state: AppState): StateProps {
   };
 }
 
-// function mapDispatchToProps(dispatch: Dispatch){
+// function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 //   return {
-//     addMessage: (message: Message) => dispatch(addMessage(message))
+//       addMessage: (message: Message) => dispatch(addMessage(message)),
+//       removeMessage: (messageId: MessageId) => dispatch(removeMessage(messageId)),
 //   }
 // }
-const mapDispatchToProps = {
+
+const dispatchMap: DispatchProps = {
   addMessage,
+  removeMessage,
 };
 
 export const ChatPanel = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  dispatchMap,
 )(_ChatPanel);

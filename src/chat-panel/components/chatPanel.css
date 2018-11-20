@@ -51,6 +51,40 @@
   white-space: pre-wrap;
   margin-top: 1%;
   border-radius: 5px;
+  position: relative;
+}
+
+.messageDivActive:hover .messageEdit {
+  opacity: 1;
+}
+
+.messageEdit {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 200ms ease-in-out;
+  display: flex;
+}
+
+.editButton {
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 0;
+  border-radius: 5px;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  flex-grow: 0;
+  justify-content: center;
+}
+
+.editButton:hover {
+  background-color: rgba(100, 185, 185, 1);
+  cursor: pointer;
 }
 
 .chatInput-container {
