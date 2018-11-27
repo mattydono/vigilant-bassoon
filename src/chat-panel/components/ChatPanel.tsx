@@ -195,7 +195,7 @@ const dispatchMap: DispatchProps = {
   editMessage,
 };
 
-export const ChatPanel = connect(
+export const ChatPanel = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps,
   dispatchMap,
 )(_ChatPanel);
