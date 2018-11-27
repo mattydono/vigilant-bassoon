@@ -25,6 +25,14 @@ export class App extends Component<{}, State> {
     this.userPersistenceService = createPersistenceService<User>('users');
     this.messagesPersistenceService = createPersistenceService<Message>('messages');
 
+    fetch('http://localhost:8080/users', {
+      method: 'GET',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    })
+      .then(response => response.json())
+      .then(parsedJSON => console.log(parsedJSON.results))
+      .catch(error => console.log('parsing failed', error));
+
     Promise.all([this.userPersistenceService.getAll(), this.messagesPersistenceService.getAll()])
       .then(([users, messages]) => {
         this.store = configureStore({
