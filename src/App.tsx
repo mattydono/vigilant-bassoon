@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import './App.css';
-import { ChatPanel, Message } from './chat-panel';
+import { ChatPanel, Message, setMessages } from './chat-panel';
 import { AppState, configureStore } from './redux';
 import { createPersistenceService, PersistenceService } from './services/persistence';
-import { User, Users } from './user-selection';
+import { getUsers, Users } from './user-selection';
 
 type State = {
   appStatus: 'loading' | 'ready' | 'error';
@@ -17,12 +17,10 @@ export class App extends Component<{}, State> {
     appStatus: 'loading',
   };
 
-  private userPersistenceService: PersistenceService<User>;
   private messagesPersistenceService: PersistenceService<Message>;
-  private store: Store<AppState>;
+  private store: Store<AppState> = configureStore();
 
   public componentDidMount() {
-    this.userPersistenceService = createPersistenceService<User>('users');
     this.messagesPersistenceService = createPersistenceService<Message>('messages');
 
     /* This needs to be within the `userPersistenceService` */
@@ -32,28 +30,13 @@ export class App extends Component<{}, State> {
         .then(parsedJSON => resolve(parsedJSON.results))
         .catch(reject);
     });
-
     serverUsers.then(console.log, console.error);
 
-    Promise.all([this.userPersistenceService.getAll(), this.messagesPersistenceService.getAll()])
-      .then(([users, messages]) => {
-        this.store = configureStore({
-          users: {
-            users,
-            activeUserId: null,
-          },
-          messages: {
-            messages,
-          },
-        });
-        this.setState({ appStatus: 'ready' });
-      })
-      .catch(reason => {
-        this.setState({
-          appStatus: 'error',
-          error: reason instanceof Error ? reason : new Error(reason),
-        });
-      });
+    this.messagesPersistenceService
+      .getAll()
+      .then(messages => this.store.dispatch(setMessages(messages)));
+    this.store.dispatch(getUsers());
+    this.setState({ appStatus: 'ready' });
   }
 
   public render() {
@@ -68,7 +51,7 @@ export class App extends Component<{}, State> {
     return (
       <Provider store={this.store}>
         <div className="app-container">
-          <Users persistenceService={this.userPersistenceService} />
+          <Users />
           <ChatPanel persistenceService={this.messagesPersistenceService} />
         </div>
       </Provider>

@@ -1,6 +1,9 @@
 import { createAction } from 'redux-actions';
 import { Message, MessageId } from '../Message';
 
+export const SET_MESSAGES = 'messages/SET_MESSAGES';
+export const setMessages = createAction<Message[]>(SET_MESSAGES);
+
 export const ADD_MESSAGE = 'messages/ADD_MESSAGE';
 export const addMessage = createAction<Message>(ADD_MESSAGE);
 export type AddMessageAction = ReturnType<typeof addMessage>;

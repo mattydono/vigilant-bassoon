@@ -1,7 +1,13 @@
-import { applyMiddleware, combineReducers, createStore, Dispatch, ReducersMapObject } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import {
+  applyMiddleware,
+  combineReducers,
+  createStore,
+  DeepPartial,
+  ReducersMapObject,
+} from 'redux';
 import { messagesReducer, MessagesState } from '../chat-panel';
-import { usersReducer, UsersState } from '../user-selection';
+import { usersMiddleware, usersReducer, UsersState } from '../user-selection';
+import { logger } from './loggerMiddleware';
 
 export type AppState = {
   users: UsersState;
@@ -13,13 +19,8 @@ const rootReducer: ReducersMapObject<AppState> = {
   messages: messagesReducer,
 };
 
-const logger = () => (next: Dispatch) => (action: any) => {
-  console.log('action fired', action);
-  next(action);
-};
+const middleware = [logger, usersMiddleware];
 
-const middleware = applyMiddleware(logger, thunkMiddleware);
-
-export function configureStore(preloadedState?: Partial<AppState>) {
-  return createStore(combineReducers(rootReducer), preloadedState, middleware);
+export function configureStore(preloadedState?: DeepPartial<AppState>) {
+  return createStore(combineReducers(rootReducer), preloadedState, applyMiddleware(...middleware));
 }

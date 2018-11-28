@@ -5,7 +5,9 @@ import {
   REMOVE_USER,
   RemoveUserAction,
   SET_ACTIVE_USER,
+  SET_USERS,
   SetActiveUserAction,
+  SetUsersAction,
 } from './usersActions';
 
 export type UsersState = {
@@ -23,6 +25,10 @@ export function usersReducer(
   action: AddUserAction | SetActiveUserAction | RemoveUserAction,
 ): UsersState {
   switch (action.type) {
+    case SET_USERS:
+      const setUsersAction = action as SetUsersAction;
+      return { ...state, users: setUsersAction.payload! };
+
     case ADD_USER:
       const addUserAction = action as AddUserAction;
       return { ...state, users: [...state.users, addUserAction.payload!] };

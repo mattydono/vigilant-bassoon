@@ -3,17 +3,12 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import uuid from 'uuid';
 import { AppState } from '../../redux';
-import { PersistenceService } from '../../services/persistence';
 import { addUser, removeUser, setActiveUser } from '../redux';
 import { User, UserId } from '../User';
 import './users.css';
 
 type State = {
   name: string;
-};
-
-type OwnProps = {
-  persistenceService: PersistenceService<User>;
 };
 
 type StateProps = {
@@ -27,7 +22,7 @@ type DispatchProps = {
   removeUser: (id: UserId) => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 export class _Users extends React.Component<Props, State> {
   public state: State = {
@@ -72,7 +67,7 @@ export class _Users extends React.Component<Props, State> {
       const onClick = this.userSelect(activeUserId === user.id ? null : user.id);
       return (
         <div key={user.id} className={`userOption ${className}`} onClick={onClick}>
-          <button className="removeUser" onClick={this.onRemoveUser(user.id)}>
+          <button className="removeUser" onClick={this.onRemoveUser}>
             ❌
           </button>
           {user.name}
@@ -81,9 +76,8 @@ export class _Users extends React.Component<Props, State> {
     });
   };
 
-  private onRemoveUser = (userId: UserId) => () => {
+  private onRemoveUser = () => {
     this.props.removeUser(this.props.activeUserId!);
-    this.props.persistenceService.remove(userId);
   };
 
   private onKeyPress: React.KeyboardEventHandler<HTMLInputElement> = event => {
@@ -133,20 +127,15 @@ function mapStateToProps(state: AppState): StateProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: OwnProps): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     setActiveUser: (userId: UserId | null) => dispatch(setActiveUser(userId)),
-    addUser: (name: string) => {
-      const user = { id: uuid(), name };
-      // TODO: Replace with redux middleware
-      ownProps.persistenceService.save(user);
-      return dispatch(addUser(user));
-    },
+    addUser: (name: string) => dispatch(addUser({ id: uuid(), name })),
     removeUser: (userId: UserId) => dispatch(removeUser(userId)),
   };
 }
 
-export const Users = connect<StateProps, DispatchProps, OwnProps>(
+export const Users = connect<StateProps, DispatchProps>(
   mapStateToProps,
   mapDispatchToProps,
 )(_Users);
